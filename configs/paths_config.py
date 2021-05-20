@@ -1,8 +1,9 @@
 dataset_paths = {
-	'celeba_train': '',
-	'celeba_test': '',
-	'celeba_train_sketch': '',
-	'celeba_test_sketch': '',
+	'celeba_train': './datasets/CelebAMask-HQ/CelebA-HQ-img',
+	# 'ir_train': './datasets/CelebAMask-HQ/CelebA-HQ-img',
+	'celeba_test': './datasets/CelebAMask-HQ/CelebA-HQ-img',
+	'celeba_train_sketch': './datasets/ir2rgb/trainA',
+	'celeba_test_sketch': './datasets/ir2rgb/testA',
 	'celeba_train_segmentation': '',
 	'celeba_test_segmentation': '',
 	'ffhq': '',
