@@ -3,4 +3,4 @@
 /datasets/ir2rgb/*
 /pretrained_models/*
 /experiments/*
-*.pycx
+*.pyc
