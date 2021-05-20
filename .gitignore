@@ -1,0 +1,6 @@
+/datasets
+/datasets/CelebAMask-HQ/*
+/datasets/ir2rgb/*
+/pretrained_models/*
+/experiments/*
+*.pycx
