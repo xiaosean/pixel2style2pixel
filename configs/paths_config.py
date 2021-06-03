@@ -2,11 +2,21 @@ dataset_paths = {
 	'celeba_train': './datasets/CelebAMask-HQ/CelebA-HQ-img',
 	# 'ir_train': './datasets/CelebAMask-HQ/CelebA-HQ-img',
 	'celeba_test': './datasets/CelebAMask-HQ/CelebA-HQ-img',
-	'celeba_train_sketch': './datasets/ir2rgb/trainA',
-	'celeba_test_sketch': './datasets/ir2rgb/testA',
+	'celeba_train_sketch': './datasets/CelebAMask-HQ/CelebA-HQ-edge',
+	# 'celeba_test_sketch': './datasets/ir2rgb/testA',
 	'celeba_train_segmentation': '',
 	'celeba_test_segmentation': '',
 	'ffhq': '',
+	'ir_test': './datasets/simslab_ir2rgb/ir',
+	'ir_2_rgb_test': './datasets/simslab_ir2rgb/rgb',
+	'celebA_ir_path': './datasets/CelebAMask-HQ/align_celebA_IR',
+	'celebA_align_path': './datasets/CelebAMask-HQ/align_celebA',
+	'celebA_subset_ir_path': './datasets/CelebAMask-HQ/align_celebA_IR_subset',
+	'celebA_subset_align_path': './datasets/CelebAMask-HQ/align_celebA_subset',
+	'fake_face_rgb_path': './datasets/fake_face/rgb',
+	'fake_face_edge_path': './datasets/fake_face/edge',
+
+
 }
 
 model_paths = {
