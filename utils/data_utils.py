@@ -22,4 +22,5 @@ def make_dataset(dir):
             if is_image_file(fname):
                 path = os.path.join(root, fname)
                 images.append(path)
+    print("images =", images[:10])
     return images

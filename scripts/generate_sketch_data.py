@@ -37,16 +37,16 @@ def get_sketch_image(image_path):
 
 use_cuda = True
 
-cache = load_lua("/path/to/sketch_gan.t7")
+cache = load_lua("./sketch_gan.t7")
 model = cache.model
 immean = cache.mean
 imstd = cache.std
 model.evaluate()
 
-data_path = "/path/to/data/imgs"
+data_path = "/data/Desktop/pixel2style2pixel/datasets/CelebAMask-HQ/CelebA-HQ-img/"
 images = [os.path.join(data_path, f) for f in os.listdir(data_path)]
 
-output_dir = "/path/to/data/edges"
+output_dir = "/data/Desktop/pixel2style2pixel/datasets/CelebAMask-HQ/edges/"
 if not os.path.exists(output_dir):
     os.makedirs(output_dir)
 
