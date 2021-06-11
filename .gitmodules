@@ -1,0 +1,3 @@
+[submodule "FaceDect-DSFD"]
+	path = FaceDect-DSFD
+	url = https://github.com/Tencent/FaceDetection-DSFD.git
