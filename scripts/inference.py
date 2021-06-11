@@ -60,7 +60,7 @@ def run():
                             batch_size=opts.test_batch_size,
                             shuffle=False,
                             num_workers=int(opts.test_workers),
-                            drop_last=True)
+                            drop_last=False)
 
     if opts.n_images is None:
         opts.n_images = len(dataset)
