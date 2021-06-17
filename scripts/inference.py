@@ -45,7 +45,8 @@ def run():
     if 'output_size' not in opts:
         opts['output_size'] = 1024
     opts = Namespace(**opts)
-
+    # opts.learn_in_w = True
+    print(f"opts option = {opts}")
     net = pSp(opts)
     net.eval()
     net.cuda()
@@ -116,8 +117,10 @@ def run_on_batch(inputs, net, opts):
         latent_mask = [int(l) for l in opts.latent_mask.split(",")]
         result_batch = []
         for image_idx, input_image in enumerate(inputs):
+            # For style mixing
             # get latent vector to inject into our input image
             vec_to_inject = np.random.randn(1, 512).astype('float32')
+            # Get W+
             _, latent_to_inject = net(torch.from_numpy(vec_to_inject).to("cuda"),
                                       input_code=True,
                                       return_latents=True)
