@@ -3,8 +3,10 @@
 /datasets/ir2rgb/*
 /pretrained_models/*
 /experiments/*
+*.pth
 *.pyc
 *.png
 *.jpg
 stats.txt
 *.t7
+*.mp4
