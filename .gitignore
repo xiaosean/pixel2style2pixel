@@ -7,6 +7,6 @@
 *.pth
 *.pyc
 *.png
-*.jpg
+result*
 stats.txt
 *.t7

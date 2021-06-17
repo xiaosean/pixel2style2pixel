@@ -1,7 +1,7 @@
 python scripts/inference.py \
---exp_dir=simslab/result_simslab_0617_w_learn_in_w \
---checkpoint_path=./experiments/20210603_celeb_ir_baseline_from_0602_60k/checkpoints/best_model.pt \
---data_path=./datasets/viplab_ir_subset \
+--exp_dir=result/result_edge_deepfake \
+--checkpoint_path=./experiments/20210609_celebs_sketch_to_face_from_best/checkpoints/best_model.pt \
+--data_path=./datasets/fake_face/edge \
 --test_batch_size=1 \
 --test_workers=4 \
 --couple_outputs

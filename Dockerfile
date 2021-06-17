@@ -66,6 +66,8 @@ RUN pip install easydict
 RUN pip install scikit-image
 RUN pip install pyyaml
 RUN pip install requests
+# For demo website
+RUN pip install streamlit
 
 
 # ####################################################################################
