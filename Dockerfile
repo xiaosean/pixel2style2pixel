@@ -68,6 +68,8 @@ RUN pip install pyyaml
 RUN pip install requests
 # For demo website
 RUN pip install streamlit
+# For config loader
+RUN pip install attrdict
 
 
 # ####################################################################################

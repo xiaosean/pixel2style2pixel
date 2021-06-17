@@ -8,6 +8,7 @@ import torch
 from PIL import Image
 from torch.utils.data import DataLoader
 import sys
+import yaml
 
 sys.path.append(".")
 sys.path.append("..")
@@ -47,6 +48,13 @@ def run():
     opts = Namespace(**opts)
     # opts.learn_in_w = True
     print(f"opts option = {opts}")
+    print(f"opts type option = {type(opts)}")
+
+    # Save currently opt to yaml
+    config_yaml = './configs/lastest_inference.yaml'
+    with open(config_yaml, "w", newline="") as fp:
+        yaml.dump(opts, fp)
+
     net = pSp(opts)
     net.eval()
     net.cuda()
