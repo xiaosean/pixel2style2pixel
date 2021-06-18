@@ -76,13 +76,17 @@ def run():
     # ===============================
     # Construct demo site by streamlit
     # ===============================
+    with st.sidebar:
+        st.header("TUST EdgeAI Course")
+        with st.form(key="grid_reset"):
+            n_photos = st.slider("Number of generate photos:", 2, 16, 8)
+            n_cols = st.number_input("Number of columns", 2, 8, 4)
+            st.form_submit_button(label="Reset images and layout")
+
+
+
     st.title('Welcome to mvclab Sketch2Real')
     st.write(" ------ ")
-
-    st.sidebar.warning('\
-        Please upload SINGLE-FACE images. For best results, please also ALIGN the face in the image.')
-    st.sidebar.write(" ------ ")
-    st.sidebar.title("NTUST EdgeAI Course")
 
     # For demo columns
     
@@ -104,64 +108,25 @@ def run():
 
         # print(f"input_image.shape =, {input_image.size}, input_image type = {input_image.type}" )
         tensor_img = inference_transform(input_image).cuda().float().unsqueeze(0)
-        print(f"tensor_img.shape =, {tensor_img.shape}, tensor_img type = {tensor_img.type}" )
         result = run_on_batch(tensor_img, net, opts)
-        print(f"result.shape =, {result.shape}, result type = {result.type}" )
         result = tensor2im(result[0]).resize(IMAGE_DISPLAY_SIZE, Image.ANTIALIAS)
         right_column.image(result,  caption = "Generated image")
 
-    # Demo result image
-    # scatter_img = Image.fromarray(scatter)
-    # skeleton_img = Image.fromarray(skeleton)
+        n_rows = 1 + n_photos // n_cols
+        rows = [st.beta_container() for _ in range(n_rows)]
+        cols_per_row = [r.beta_columns(n_cols) for r in rows]
 
-    # right_column.image(scatter_img,  caption = "Predicted Keypoints")
-    # st.image(skeleton_img, caption = 'FINAL: Predicted Pose')
-    
+        for image_index in range(n_photos):
+            with rows[image_index // n_cols]:
+                result = run_on_batch(tensor_img, net, opts)
+                result = tensor2im(result[0]).resize(IMAGE_DISPLAY_SIZE, Image.ANTIALIAS)
+                cols_per_row[image_index // n_cols][image_index % n_cols].image(result)
 
-
-
-#         with torch.no_grad():
-#             input_cuda = input_batch.cuda().float()
-#             tic = time.time()
-#             result_batch = run_on_batch(input_cuda, net, opts)
-#             toc = time.time()
-#             global_time.append(toc - tic)
-
-#         for i in range(opts.test_batch_size):
-#             result = tensor2im(result_batch[i])
-#             im_path = dataset.paths[global_i]
-
-#             if opts.couple_outputs or global_i % 100 == 0:
-#                 input_im = log_input_image(input_batch[i], opts)
-#                 resize_amount = (256, 256) if opts.resize_outputs else (opts.output_size, opts.output_size)
-#                 if opts.resize_factors is not None:
-#                     # for super resolution, save the original, down-sampled, and output
-#                     source = Image.open(im_path)
-#                     res = np.concatenate([np.array(source.resize(resize_amount)),
-#                                           np.array(input_im.resize(resize_amount, resample=Image.NEAREST)),
-#                                           np.array(result.resize(resize_amount))], axis=1)
-#                 else:
-#                     # otherwise, save the original and output
-#                     res = np.concatenate([np.array(input_im.resize(resize_amount)),
-#                                           np.array(result.resize(resize_amount))], axis=1)
-#                 Image.fromarray(res).save(os.path.join(out_path_coupled, os.path.basename(im_path)))
-
-#             im_save_path = os.path.join(out_path_results, os.path.basename(im_path))
-#             Image.fromarray(np.array(result)).save(im_save_path)
-
-#             global_i += 1
-
-#     stats_path = os.path.join(opts.exp_dir, 'stats.txt')
-#     result_str = 'Runtime {:.4f}+-{:.4f}'.format(np.mean(global_time), np.std(global_time))
-#     print(result_str)
-
-#     with open(stats_path, 'w') as f:
-#         f.write(result_str)
 
 
 def run_on_batch(inputs, net, opts):
     if opts.latent_mask is None:
-        result_batch = net(inputs, randomize_noise=False, resize=opts.resize_outputs)
+        result_batch = net(inputs, randomize_noise=True, resize=opts.resize_outputs)
     else:
         latent_mask = [int(l) for l in opts.latent_mask.split(",")]
         result_batch = []
