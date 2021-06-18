@@ -81,7 +81,9 @@ def run():
         with st.form(key="grid_reset"):
             n_photos = st.slider("Number of generate photos:", 2, 16, 8)
             n_cols = st.number_input("Number of columns", 2, 8, 4)
-            st.form_submit_button(label="Reset images and layout")
+            mixed_alpha = st.slider("Number of mixed style(0~1)", 0, 100, 0)
+            latent_code_range = st.slider('Select a range of values', 1, 18, (1, 18))
+            st.form_submit_button(label="Generate new images")
 
 
 
@@ -105,47 +107,47 @@ def run():
     if uploaded_file is not None:
         input_image = Image.open(uploaded_file)
         left_column.image(input_image.resize(IMAGE_DISPLAY_SIZE, Image.ANTIALIAS), caption = "Your protrait image(edge only)")
-
-        # print(f"input_image.shape =, {input_image.size}, input_image type = {input_image.type}" )
         tensor_img = inference_transform(input_image).cuda().float().unsqueeze(0)
         result = run_on_batch(tensor_img, net, opts)
         result = tensor2im(result[0]).resize(IMAGE_DISPLAY_SIZE, Image.ANTIALIAS)
         right_column.image(result,  caption = "Generated image")
-
+        # Create grid
         n_rows = 1 + n_photos // n_cols
         rows = [st.beta_container() for _ in range(n_rows)]
         cols_per_row = [r.beta_columns(n_cols) for r in rows]
 
         for image_index in range(n_photos):
             with rows[image_index // n_cols]:
-                result = run_on_batch(tensor_img, net, opts)
+                # Generate with alpha and latent code attributes.
+                result = run_on_batch(tensor_img, net, opts, latent_code=latent_code_range, mixed_alpha=mixed_alpha/100)
                 result = tensor2im(result[0]).resize(IMAGE_DISPLAY_SIZE, Image.ANTIALIAS)
                 cols_per_row[image_index // n_cols][image_index % n_cols].image(result)
 
 
 
-def run_on_batch(inputs, net, opts):
-    if opts.latent_mask is None:
-        result_batch = net(inputs, randomize_noise=True, resize=opts.resize_outputs)
-    else:
-        latent_mask = [int(l) for l in opts.latent_mask.split(",")]
-        result_batch = []
-        for image_idx, input_image in enumerate(inputs):
-            # For style mixing
-            # get latent vector to inject into our input image
-            vec_to_inject = np.random.randn(1, 512).astype('float32')
-            # Get W+
-            _, latent_to_inject = net(torch.from_numpy(vec_to_inject).to("cuda"),
-                                      input_code=True,
-                                      return_latents=True)
-            # get output image with injected style vector
-            res = net(input_image.unsqueeze(0).to("cuda").float(),
-                      latent_mask=latent_mask,
-                      inject_latent=latent_to_inject,
-                      alpha=opts.mix_alpha,
-                      resize=opts.resize_outputs)
-            result_batch.append(res)
-        result_batch = torch.cat(result_batch, dim=0)
+def run_on_batch(inputs, net, opts, latent_code=None, mixed_alpha=0):
+    # latent_mask = [int(l) for l in opts.latent_mask.split(",")]
+    latent_mask = [i for i in range(18)]
+    if latent_code:
+        latent_mask = [i for i in range(latent_code[0]-1, latent_code[1])]
+    # print(f"selected latent mask = {latent_mask} alpha = {mixed_alpha}")
+    result_batch = []
+    for image_idx, input_image in enumerate(inputs):
+        # For style mixing
+        # get latent vector to inject into our input image
+        vec_to_inject = np.random.randn(1, 512).astype('float32')
+        # Get W+
+        _, latent_to_inject = net(torch.from_numpy(vec_to_inject).to("cuda"),
+                                    input_code=True,
+                                    return_latents=True)
+        # get output image with injected style vector
+        res = net(input_image.unsqueeze(0).to("cuda").float(),
+                    latent_mask=latent_mask,
+                    inject_latent=latent_to_inject,
+                    alpha=mixed_alpha,
+                    resize=opts.resize_outputs)
+        result_batch.append(res)
+    result_batch = torch.cat(result_batch, dim=0)
     return result_batch
 
 
