@@ -9,6 +9,7 @@ from PIL import Image
 from torch.utils.data import DataLoader
 import sys
 import yaml
+from torchsummary import summary
 
 sys.path.append(".")
 sys.path.append("..")
@@ -58,7 +59,6 @@ def run():
     net = pSp(opts)
     net.eval()
     net.cuda()
-
     print('Loading dataset for {}'.format(opts.dataset_type))
     dataset_args = data_configs.DATASETS[opts.dataset_type]
     transforms_dict = dataset_args['transforms'](opts).get_transforms()

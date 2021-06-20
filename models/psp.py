@@ -7,6 +7,9 @@ import math
 
 import torch
 from torch import nn
+from torch.cuda.amp import autocast, GradScaler
+
+
 from models.encoders import psp_encoders
 from models.stylegan2.model import Generator
 from configs.paths_config import model_paths
@@ -68,27 +71,28 @@ class pSp(nn.Module):
 
 	def forward(self, x, resize=True, latent_mask=None, input_code=False, randomize_noise=True,
 	            inject_latent=None, return_latents=False, alpha=None):
-		if input_code:
-			codes = x
-		else:
-			codes = self.encoder(x)
-			# normalize with respect to the center of an average face
-			if self.opts.start_from_latent_avg:
-				if self.opts.learn_in_w:
-					codes = codes + self.latent_avg.repeat(codes.shape[0], 1)
-				else:
-					codes = codes + self.latent_avg.repeat(codes.shape[0], 1, 1)
-
-
-		if latent_mask is not None:
-			for i in latent_mask:
-				if inject_latent is not None:
-					if alpha is not None:
-						codes[:, i] = alpha * inject_latent[:, i] + (1 - alpha) * codes[:, i]
+		with autocast():
+			if input_code:
+				codes = x
+			else:
+				codes = self.encoder(x)
+				# normalize with respect to the center of an average face
+				if self.opts.start_from_latent_avg:
+					if self.opts.learn_in_w:
+						codes = codes + self.latent_avg.repeat(codes.shape[0], 1)
 					else:
-						codes[:, i] = inject_latent[:, i]
-				else:
-					codes[:, i] = 0
+						codes = codes + self.latent_avg.repeat(codes.shape[0], 1, 1)
+
+
+			if latent_mask is not None:
+				for i in latent_mask:
+					if inject_latent is not None:
+						if alpha is not None:
+							codes[:, i] = alpha * inject_latent[:, i] + (1 - alpha) * codes[:, i]
+						else:
+							codes[:, i] = inject_latent[:, i]
+					else:
+						codes[:, i] = 0
 
 		input_is_latent = not input_code
 		images, result_latent = self.decoder([codes],

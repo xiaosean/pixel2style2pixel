@@ -9,6 +9,7 @@ from torch import nn
 from torch.utils.data import DataLoader
 from torch.utils.tensorboard import SummaryWriter
 import torch.nn.functional as F
+from torch.cuda.amp import autocast, GradScaler
 
 from utils import common, train_utils
 from criteria import id_loss, w_norm, moco_loss
@@ -72,20 +73,37 @@ class Coach:
 		self.best_val_loss = None
 		if self.opts.save_interval is None:
 			self.opts.save_interval = self.opts.max_steps
+		print(f"self.opts = {self.opts}")
 
 	def train(self):
 		self.net.train()
+		# New amp version - 20210620
+		scaler = GradScaler()
 		while self.global_step < self.opts.max_steps:
 			for batch_idx, batch in enumerate(self.train_dataloader):
 				self.optimizer.zero_grad()
 				x, y = batch
 				x, y = x.to(self.device).float(), y.to(self.device).float()
+				
+				# Old version - 20210619
+				# y_hat, latent = self.net.forward(x, return_latents=True)
+				# # latent.shape = torch.Size([8, 18, 512])
+				# # y_hat.shape = torch.Size([8, 3, 256, 256])
+				# loss, loss_dict, id_logs = self.calc_loss(x, y, y_hat, latent)
+				# loss.backward()
+				# self.optimizer.step()
+
+				# New amp version - 20210620
+				# Enables autocasting for the forward pass (model + loss)
+				# Move to encoder
+				# with autocast():
 				y_hat, latent = self.net.forward(x, return_latents=True)
 				# latent.shape = torch.Size([8, 18, 512])
 				# y_hat.shape = torch.Size([8, 3, 256, 256])
 				loss, loss_dict, id_logs = self.calc_loss(x, y, y_hat, latent)
-				loss.backward()
-				self.optimizer.step()
+				scaler.scale(loss).backward()
+				scaler.step(self.optimizer)
+				scaler.update()
 
 				# Logging related
 				if self.global_step % self.opts.image_interval == 0 or (
@@ -157,7 +175,7 @@ class Coach:
 
 	def configure_optimizers(self):
 		params = list(self.net.encoder.parameters())
-		if self.opts.train_decoder:
+		if self.opts.train_decoder: # Default: False
 			params += list(self.net.decoder.parameters())
 		if self.opts.optim_name == 'adam':
 			optimizer = torch.optim.Adam(params, lr=self.opts.learning_rate)
