@@ -1,12 +1,12 @@
 batch_size: 8
 board_interval: 50
-checkpoint_path: ./experiments/20210609_celebs_sketch_to_face_from_best/checkpoints/iteration_170000.pt
+checkpoint_path: ./experiments/20210609_celebs_sketch_to_face_from_best/checkpoints/best_model.pt
 couple_outputs: true
-data_path: ./datasets/Edge2anime_small_dataset
+data_path: ./datasets/fake_face/edge
 dataset_type: celebs_sketch_to_face
 device: cuda:0
 encoder_type: GradualStyleEncoder
-exp_dir: result/result_edge_0609_170000
+exp_dir: result/result_edge_deepfake
 id_lambda: 0.0
 image_interval: 100
 input_nc: 1

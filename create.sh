@@ -1,5 +1,5 @@
 # docker run -t -i --name style2pix --gpus all -v /home/xiaosean/:/data -p 8007:8007 -p 8008:8008 --shm-size 120G  pytorch/pytorch:1.7.1-cuda11.0-cudnn8-runtime /bin/bash
-docker run -t -i --name style2pix --gpus all -v /home/xiaosean/:/data -p 8007:8007 -p 8008:8008 --shm-size 120G pix2style /bin/bash
+docker run -t -i --name v19_pix2style --gpus all -v /home/xiaosean/:/data -p 8051:8051 --shm-size 120G pytorch_v19 /bin/bash
 # docker run -t -i --name style2pix --gpus all -v /home/xiaosean/:/data -p 8007:8007 -p 8008:8008 --shm-size 120G pytorchlightning/pytorch_lightning:base-conda-py3.8-torch1.8 /bin/bash
 # apt update
 # wget \
