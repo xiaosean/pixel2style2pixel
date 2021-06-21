@@ -7,7 +7,7 @@ import math
 
 import torch
 from torch import nn
-from torch.cuda.amp import autocast, GradScaler
+# from torch.cuda.amp import autocast, GradScaler
 
 
 from models.encoders import psp_encoders
