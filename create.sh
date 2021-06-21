@@ -15,3 +15,10 @@ docker run -t -i --name v19_pix2style --gpus all -v /home/xiaosean/:/data -p 805
 # --- apt-get install build-essential
 # apt install libgl1-mesa-glx
 # conda env update -n base --file ./environment/psp_env.yaml
+
+# glib problem
+# sudo apt update
+# sudo apt install wget gcc-8 unzip libssl1.0.0 software-properties-common
+# sudo add-apt-repository ppa:ubuntu-toolchain-r/test
+# sudo apt update
+# sudo apt-get install --only-upgrade libstdc++6

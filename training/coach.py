@@ -78,7 +78,7 @@ class Coach:
 	def train(self):
 		self.net.train()
 		# New amp version - 20210620
-		scaler = GradScaler()
+		# scaler = GradScaler()
 		while self.global_step < self.opts.max_steps:
 			for batch_idx, batch in enumerate(self.train_dataloader):
 				self.optimizer.zero_grad()
@@ -86,24 +86,23 @@ class Coach:
 				x, y = x.to(self.device).float(), y.to(self.device).float()
 				
 				# Old version - 20210619
-				# y_hat, latent = self.net.forward(x, return_latents=True)
-				# # latent.shape = torch.Size([8, 18, 512])
-				# # y_hat.shape = torch.Size([8, 3, 256, 256])
-				# loss, loss_dict, id_logs = self.calc_loss(x, y, y_hat, latent)
-				# loss.backward()
-				# self.optimizer.step()
+				y_hat, latent = self.net.forward(x, return_latents=True)
+				# latent.shape = torch.Size([8, 18, 512])
+				# y_hat.shape = torch.Size([8, 3, 256, 256])
+				loss, loss_dict, id_logs = self.calc_loss(x, y, y_hat, latent)
+				loss.backward()
+				self.optimizer.step()
 
 				# New amp version - 20210620
 				# Enables autocasting for the forward pass (model + loss)
 				# Move to encoder
 				# with autocast():
-				y_hat, latent = self.net.forward(x, return_latents=True)
-				# latent.shape = torch.Size([8, 18, 512])
-				# y_hat.shape = torch.Size([8, 3, 256, 256])
-				loss, loss_dict, id_logs = self.calc_loss(x, y, y_hat, latent)
-				scaler.scale(loss).backward()
-				scaler.step(self.optimizer)
-				scaler.update()
+				# Below block still used.
+				# y_hat, latent = self.net.forward(x, return_latents=True)
+				# loss, loss_dict, id_logs = self.calc_loss(x, y, y_hat, latent)
+				# scaler.scale(loss).backward()
+				# scaler.step(self.optimizer)
+				# scaler.update()
 
 				# Logging related
 				if self.global_step % self.opts.image_interval == 0 or (

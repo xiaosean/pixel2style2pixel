@@ -1,13 +1,12 @@
-!!python/object:argparse.Namespace
 batch_size: 8
 board_interval: 50
-checkpoint_path: ./experiments/20210620_amp_celebs_sketch_from_sketch/checkpoints/iteration_75000.pt
+checkpoint_path: ./experiments/20210609_celebs_sketch_to_face_from_best/checkpoints/iteration_170000.pt
 couple_outputs: true
 data_path: ./datasets/Edge2anime_small_dataset
 dataset_type: celebs_sketch_to_face
 device: cuda:0
 encoder_type: GradualStyleEncoder
-exp_dir: result/result_edge_0620_75000
+exp_dir: result/result_edge_0609_170000
 id_lambda: 0.0
 image_interval: 100
 input_nc: 1

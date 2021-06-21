@@ -1,4 +1,3 @@
-!!python/object:argparse.Namespace
 batch_size: 8
 board_interval: 50
 checkpoint_path: ./experiments/20210620_amp_celebs_sketch_from_sketch/checkpoints/iteration_75000.pt

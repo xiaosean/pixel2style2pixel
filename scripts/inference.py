@@ -9,7 +9,6 @@ from PIL import Image
 from torch.utils.data import DataLoader
 import sys
 import yaml
-from torchsummary import summary
 
 sys.path.append(".")
 sys.path.append("..")
