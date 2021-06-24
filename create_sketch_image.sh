@@ -1,0 +1,1 @@
+docker build ./sktech_preconfigure -t sketech_gen
